@@ -14,12 +14,19 @@
       <file leaf-file-name="shamasai_lab2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shamasai_lab2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="37" column="16" lean-forward="false" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="52" />
+            <state relative-caret-position="402">
+              <caret line="122" column="148" lean-forward="false" selection-start-line="122" selection-start-column="148" selection-end-line="122" selection-end-column="148" />
               <folding>
                 <element signature="e#41#59#0" expanded="true" />
               </folding>
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="part2_1.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/figures/part2_1.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
           </provider>
         </entry>
       </file>
@@ -188,10 +195,15 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/figures/part2_1.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/shamasai_lab2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="37" column="16" lean-forward="false" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="52" />
+        <state relative-caret-position="402">
+          <caret line="122" column="148" lean-forward="false" selection-start-line="122" selection-start-column="148" selection-end-line="122" selection-end-column="148" />
           <folding>
             <element signature="e#41#59#0" expanded="true" />
           </folding>
