@@ -2,25 +2,23 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import math
-import scipy
+import cmath
 
-####### PART 1 ########
+###################### PART 1 #########################
 
 def gaussian(t, center, tH):
     gaussian = ( 1 / ( np.sqrt(np.pi) * tH) ) * np.exp( - ( (t-center) /tH) **2 )
-
     return gaussian
 
-def gaussian_FT_analytical(w, tH):
-    gaussian_ft = exp ( - (w * tH / 2.0 ) ** 2  )
+def gaussian_FT_analytical(f, tH):
+    gaussian_ft = np.exp ( - (f * tH / 2.0 ) ** 2  )
     return gaussian_ft
 
-def plot_figure(x, y_s,figsize, xlabel, ylabel, title, legend_labels,xlim,ylim,filename):
+def plot_figure(x, y_s,figsize, xlabel, ylabel, title, legend_labels,xlim,ylim,filename, markers):
     fig = plt.figure(figsize = figsize)
     plt.grid(1)
     for i in range(len(y_s)):
-        plt.plot(x, y_s[i], label = legend_labels[i])
+        plt.plot(x, y_s[i], markers[i], label = legend_labels[i])
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -30,48 +28,103 @@ def plot_figure(x, y_s,figsize, xlabel, ylabel, title, legend_labels,xlim,ylim,f
     fig.savefig(filename)
     return
 
+
 def part1_1():
 
     tH = np.array([10,20])
     center = 0
-    t = np.arange(0, 801, 1)
-
+    t = np.arange(-100,100, 1)
+    #TODO: fix this convention. you want data in the columns, not rows :(
     gaussians = np.zeros((tH.shape[0], t.shape[0]))
-    gaussian_labels = np.chararray(tH.shape)
+    gaussian_labels = np.array(["tH = 10", "tH = 20 "])
+    markers = np.array(['-', '-'])
     for i in range(len(tH)):
         gaussians[i, :] = gaussian(t, center, tH[i])
-        gaussian_labels[i] = "tH = %s" % tH[i]
-
-    plot_figure(t, gaussians, (10,15), "t", "Gaussian distributions", "Gaussian distribution functions with half durations 10 and 20", gaussian_labels, (0,800), (-0.1,0.1), "figures/part1_guassians.png")
+    plot_figure(t, gaussians, (7,7), "t", "Gaussian distributions", "Gaussian distribution functions with half durations 10 and 20", gaussian_labels, (-100,100), (-0.01,0.06), "figures/part1_guassians.png", markers)
 
 def part1_3():
-    tH = np.array([10, 20])
-    t = np.arange(0, 801, 1)
-    #TODO: figure out how to set w i.e. in what range to plot G(w)
-    w = np.arange(0,800,1)
+    th = np.array([10,20])
+    T = 100
+    dt = 1
+    t = np.arange(-T, T, dt)
+    center = 0
+    #create gaussian, gaussian_fft, gaussian_FT_analytical, amplitudes for each of them and their axes
 
-    gaussians = np.zeros((t.shape[0], tH.shape[0]))
-    gaussians_fft = np.zeros(gaussians.shape)
+    #create (4, len(f_axis) np array of gaussian transforms
+    #first computed then analytical
 
-    #TODO: figure out how to use the shift property?
+    for i in range(len(th)):
+        gaussian_fn = gaussian(t, center, th)
+        gaussian_fn_fft = np.fft.fft(gaussian_fn)
+        gaussian_fn_fft_shifted = np.fft.fftshift(gaussian_fn_fft)
+
+        #TODO: figure out how this thing works
+        f_axis = np.fft.fftfreq(len(gaussian_fn), dt)
+        f_axis_shifted = np.fft.fftshift(np.fft.fftfreq(len(gaussian_fn) , dt))
+
+        #TODO: figure out what expnonential to multiply by
+        gaussian_fn_analytical = gaussian_FT_analytical(2*cmath.pi*f_axis_shifted, th)
+
+        gaussian_fn_fft_shifted_amplitude = np.absolute(gaussian_fn_fft_shifted)
+        gaussian_fn_analytical_amplitude = np.absolute(gaussian_fn_analytical)
+        gaussian_fn_amplitude = np.absolute(gaussian_fn)
+
+        if i == 0 :
+            gaussian_transforms = np.vstack((gaussian_fn_analytical_amplitude, gaussian_fn_fft_shifted_amplitude))
+        else:
+            gaussian_transforms = np.vstack((gaussian_transforms, gaussian_fn_analytical_amplitude, gaussian_fn_fft_shifted_amplitude))
+
+    labels = np.array(["analytical, tH = 10", "computed, tH = 10", "analytical, tH = 20", "computed, tH = 20"])
+    markers = np.array(["-", "x", "-", "x"])
+
+    #TODO: figure out if frequency axes are same for th = 10 and th = 20
+    plot_figure()
+def part1_4():
+    t = np.arange(-5,5,0.01)
+    th = 10
+    center = 0
+    general_fn = np.sin(t)
+    gaussian_fn = gaussian(t, center, th)
+    filtered = np.convolve(general_fn, gaussian_fn)
+    plt.plot(general_fn, label = "general function - sine")
+    plt.plot(gaussian_fn, label= "gaussian with th = 10")
+    plt.plot(filtered, label = "convolved sine and gaussian")
+    plt.legend()
+    print(filtered.shape, gaussian_fn.shape, general_fn.shape)
+    plt.show()
 
 
-    # gaussians_analytical = np.zeros(gaussians.shape)
-    # gaussian_labels = np.chararray(tH.shape)
-    # gaussian_labels_fft = np.chararray(tH.shape)
-    # gaussian_labels_analytical = np.chararray(tH.shape)
-    #
+#test functions
 
-    #print(gaussians.shape, gaussians_fft.shape, gaussians_analytical.shape)
-    #
-    # for i in range(len(tH)):
-    #     gaussians[i, :] = gaussian(t, center, tH[i])
-    #     gaussians_fft = np.fft.fft(gaussians[i])
-    #     gaussians_analytical = gaussian_FT_analytical(gaussians[i])
-    #     gaussian_labels[i] = "g(t) with tH = %s" % tH[i]
-    #     gaussian_labels_analytical = "analytical G(w) with tH = %s" %tH[i]
-    #     gaussians_labels_fft = "FFT of g(t) with tH = %s" % tH[i]
-    #
+def test_fft():
+    th = 10
+    T = 100
+    dt = 1
+    t = np.arange(-T, T, dt)
+    center = 0
+    #create gaussian, gaussian_fft, gaussian_FT_analytical, amplitudes for each of them and their axes
+
+
+    gaussian_fn = gaussian(t, center, th)
+    gaussian_fn_fft = np.fft.fft(gaussian_fn)
+    gaussian_fn_fft_shifted = np.fft.fftshift(gaussian_fn_fft)
+
+    #TODO: figure out how this thing works
+    f_axis = np.fft.fftfreq(len(gaussian_fn), dt)
+    f_axis_shifted = np.fft.fftshift(np.fft.fftfreq(len(gaussian_fn) , dt))
+
+    #TODO: figure out what expnonential to multiply by
+    gaussian_fn_analytical = gaussian_FT_analytical(2*cmath.pi*f_axis_shifted, th)
+
+
+    gaussian_fn_fft_shifted_amplitude = np.absolute(gaussian_fn_fft_shifted)
+    gaussian_fn_analytical_amplitude = np.absolute(gaussian_fn_analytical)
+    gaussian_fn_amplitude = np.absolute(gaussian_fn)
+
+    plt.plot(f_axis_shifted, gaussian_fn_fft_shifted_amplitude, label = "computed G(w), tH = %s" %th)
+    plt.plot(f_axis_shifted, gaussian_fn_analytical_amplitude, label = "analytical G(w), tH = %s" %th)
+    plt.legend()
+    plt.show()
 
 
 ################## PART 2 ##################################
@@ -88,27 +141,8 @@ def hann(t,T):
     start = np.where(t >= 0 ) [0][0]
     end = np.where(t >= T)[0][0]
     hann = np.zeros(t.shape)
-    hann[start:end] = 0.5 * ( np.ones(t[start:end].shape) - np.cos( ( 2 * math.pi / T ) * t[start:end] )  )
+    hann[start:end] = 0.5 * ( np.ones(t[start:end].shape) - np.cos( ( 2 * cmath.pi / T ) * t[start:end] )  )
     return hann
-
-def test_boxcar():
-    #testing boxcar
-    T = 10
-    dt = 0.01
-    t = np.arange(-4, T+10, dt)
-                                     
-    boxcar_fn = boxcar(t, T)
-    plt.plot(t, boxcar_fn)
-    plt.show()
-
-def test_hann():
-    T = 10
-    dt = 0.01
-    t = np.arange(-4, T+10, dt)
-
-    hann_fn = hann(t, T)
-    plt.plot(t, hann_fn)
-    plt.show()                      
 
 def part2_1():
 
@@ -122,10 +156,41 @@ def part2_1():
     legend_labels = np.array(["boxcar", "hann"])
     plot_figure(t, np.array([boxcar_fn, hann_fn]), (6,5), "time, t", "windowing function", "Boxcar and Hann function", legend_labels,(-4,T+10),(-0.5,2),"figures/part2_1.png")
 
+#test functions
+def test_boxcar():
+    # testing boxcar
+    T = 10
+    dt = 0.01
+    t = np.arange(-4, T + 10, dt)
+
+    boxcar_fn = boxcar(t, T)
+    plt.plot(t, boxcar_fn)
+    plt.show()
+
+
+def test_hann():
+    T = 10
+    dt = 0.01
+    t = np.arange(-4, T + 10, dt)
+
+    hann_fn = hann(t, T)
+    plt.plot(t, hann_fn)
+    plt.show()
 
 
 
-################### MAIN ######################
-#part1_1()
-#part1_3()
-part2_1()
+################## MAIN ##################
+
+if __name__ == "__main__":
+    part1_1()
+
+
+
+
+
+
+
+
+
+
+
