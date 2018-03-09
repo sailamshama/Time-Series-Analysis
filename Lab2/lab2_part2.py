@@ -51,7 +51,7 @@ def part2_1():
 def part2_2():
     T = 10
     dt = 0.01
-    #TODO: see whether to change this. I know it must be > 10
+    #TODO: see whether to change this range. I know it must be > 10
     t = np.arange(-3, T+1 , dt)
 
     boxcar_fn = boxcar(t, T)

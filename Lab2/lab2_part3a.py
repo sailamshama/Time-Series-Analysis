@@ -49,7 +49,7 @@ def RDFcacl(S, dk, rho):
     gn = 1 + ( 1 / (2 * cmath.pi**2 * rho * r_n) ) * np.fft.ifft( np.fft.fftshift(get_Pk(S, k)) ) * N * dk / (2 * cmath.pi)
     return gn, r_n
 
-def part3_1():
+def part3_2():
     k = get_k()
     Pk = get_Pk(get_Sk(), k)
     fig = plt.figure()
@@ -57,7 +57,7 @@ def part3_1():
     plt.xlabel("inverse armstrong")
     plt.ylabel("Pk")
     plt.title("Plot of Pk")
-    fig.savefig("figures/part3_1.png")
+    fig.savefig("figures/part3_2.png")
 
 def part3_4():
     dk = 0.12
@@ -73,7 +73,7 @@ def part3_4():
     plt.ylabel("g(r)")
     fig.savefig("figures/part3_4.png")
 
-#TODO: fix this part
+#TODO: figure out 3.5
 # def part3_5():
 #     dk = 0.12
 #     rho = 1.4273
@@ -96,5 +96,5 @@ def test_k():
 ##################################### MAIN #####################################
 
 if __name__ == "__main__":
-    part3_1()
+    part3_2()
     part3_4()
