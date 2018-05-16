@@ -46,8 +46,8 @@ co2Values = np.array([
 co2Data = co2Values.flatten()
 
 # hint: to generate time vector: 
-# time=linspace(co2TimeRange(0),co2TimeRange(1),length(co2Data));
 co2TimeRange = [1965.0417, 2003.9583]
+time= np.linspace(co2TimeRange[0],co2TimeRange[1],len(co2Data))
 
 
 #Notes:
